@@ -50,6 +50,7 @@ module Mandrill
         end
 
         def cast_error(body, status_code = nil)
+
             error_map = {
                 'ValidationError' => ValidationError,
                 'Invalid_Key' => InvalidKeyError,
