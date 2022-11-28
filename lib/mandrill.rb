@@ -34,7 +34,8 @@ module Mandrill
             params = JSON.generate(params)
             r = @session.post(:path => "#{@path}#{url}.json", :headers => {'Content-Type' => 'application/json'}, :body => params)
             
-            cast_error(r.body, r.status) if r.status != 200
+            # cast_error(r.body, r.status) if r.status != 200
+            cast_error(r.body, r.status)
             return JSON.parse(r.body)
         end
 
