@@ -14,6 +14,12 @@
 #
 module Mandrill
     class Error < StandardError
+        attr_reader :error_info, :status_code
+        def initialize(msg, error_info = {}, status_code = nil)
+            @error_info = error_info
+            @status_code = status_code
+            super(msg)
+        end
     end
     class ValidationError < Error
     end

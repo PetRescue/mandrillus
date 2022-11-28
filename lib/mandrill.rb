@@ -34,7 +34,7 @@ module Mandrill
             params = JSON.generate(params)
             r = @session.post(:path => "#{@path}#{url}.json", :headers => {'Content-Type' => 'application/json'}, :body => params)
             
-            cast_error(r.body) if r.status != 200
+            cast_error(r.body, r.status) if r.status != 200
             return JSON.parse(r.body)
         end
 
@@ -49,7 +49,7 @@ module Mandrill
             return nil
         end
 
-        def cast_error(body)
+        def cast_error(body, status_code = nil)
 
             error_map = {
                 'ValidationError' => ValidationError,
@@ -86,15 +86,15 @@ module Mandrill
             begin
                 error_info = JSON.parse(body)
                 if error_info['status'] != 'error' or not error_info['name']
-                    raise Error, "We received an unexpected error: #{body}"
+                    raise Error, "We received an unexpected error: #{body}", error_info, status_code 
                 end
                 if error_map[error_info['name']]
                     raise error_map[error_info['name']], error_info['message']
                 else
-                    raise Error, error_info['message']
+                    raise Error, error_info['message'], error_info, status_code
                 end
             rescue JSON::ParserError
-                raise Error, "We received an unexpected error: #{body}"
+                raise Error, "We received an JSON::ParserError error: #{body}"
             end
         end
 
